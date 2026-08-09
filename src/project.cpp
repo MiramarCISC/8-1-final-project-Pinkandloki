@@ -1,445 +1,209 @@
-#include "project.hpp"
+#include <iostream>
+#include <string>
 #include <fstream>
 #include <iomanip>
-#include <iostream>
 
 using namespace std;
 
-// ===============================
-// ScoreList
-// ===============================
-
-ScoreList::ScoreList() {
-    count = 0;
-
-    for (int i = 0; i < 10; i++) {
-        scores[i] = 0.0;
-    }
+// Stores information about one dog
+struct Dog {
+string name;
+int age;
+double weight;
+};
+// Displays the main menu
+void showMenu() {
+cout << "\n--- DOG CARE TRACKER ---\n";
+cout << "1. Add a dog\n";
+cout << "2. View dogs\n";
+cout << "3. Show oldest dog\n";
+cout << "4. Show heaviest dog\n";
+cout << "5. Exit\n";
+cout << "Enter your choice: ";
 }
 
-bool ScoreList::addScore(double score) {
-    if (!isValidScore(score) || count >= 10) {
-        return false;
-    }
+// Gets information for a new dog
+Dog addDog() {
+Dog newDog;
 
-    scores[count] = score;
-    count++;
+cout << "\nEnter dog's name: ";
+cin >> newDog.name;
 
-    return true;
+cout << "Enter dog's age: ";
+cin >> newDog.age;
+
+cout << "Enter dog's weight: ";
+cin >> newDog.weight;
+
+return newDog;
 }
 
-int ScoreList::getCount() const {
-    return count;
+// Displays all dogs
+void viewDogs(Dog dogs[], int count) {
+if (count == 0) {
+cout << "\nNo dogs have been added yet.\n";
+return;
 }
 
-double ScoreList::getScoreAt(int index) const {
-    if (index < 0 || index >= count) {
-        return 0.0;
-    }
+cout << "\n--- YOUR DOGS ---\n";
 
-    return scores[index];
+for (int i = 0; i < count; i++) {
+cout << "Dog " << i + 1 << ": " << dogs[i].name << endl;
+cout << "Age: " << dogs[i].age << endl;
+cout << "Weight: " << dogs[i].weight << " lbs" << endl;
+cout << endl;
+}
 }
 
-double ScoreList::getTotal() const {
-    double total = 0.0;
+// Saves dog information to a file
+void saveDogs(Dog dogs[], int count) {
+ofstream outFile("dogs.txt");
 
-    for (int i = 0; i < count; i++) {
-        total += scores[i];
-    }
-
-    return total;
+for (int i = 0; i < count; i++) {
+outFile << dogs[i].name << endl;
+outFile << dogs[i].age << endl;
+outFile << dogs[i].weight << endl;
 }
 
-double ScoreList::getAverage() const {
-    if (count == 0) {
-        return 0.0;
-    }
-
-    return getTotal() / count;
+outFile.close();
 }
 
-int ScoreList::findScore(double target) const {
-    for (int i = 0; i < count; i++) {
-        if (scores[i] == target) {
-            return i;
-        }
-    }
+// Loads dog information from a file
+int loadDogs(Dog dogs[]) {
+ifstream inFile("dogs.txt");
+int count = 0;
 
-    return -1;
+while (count < 10 && inFile >> dogs[count].name) {
+inFile >> dogs[count].age;
+inFile >> dogs[count].weight;
+count++;
 }
 
-void ScoreList::sortAscending() {
-    for (int start = 0; start < count - 1; start++) {
-        int minIndex = start;
-
-        for (int i = start + 1; i < count; i++) {
-            if (scores[i] < scores[minIndex]) {
-                minIndex = i;
-            }
-        }
-
-        double temp = scores[start];
-        scores[start] = scores[minIndex];
-        scores[minIndex] = temp;
-    }
+inFile.close();
+return count;
 }
 
-bool ScoreList::isValidScore(double score) {
-    return score >= 0.0 && score <= 100.0;
+// Finds and displays the oldest dog
+void showOldestDog(Dog dogs[], int count) {
+if (count == 0) {
+cout << "\nNo dogs have been added yet.\n";
+return;
 }
 
-// ===============================
-// Student
-// ===============================
+int oldest = 0;
 
-Student::Student() {
-    id = "";
-    name = "";
+for (int i = 1; i < count; i++) {
+if (dogs[i].age > dogs[oldest].age) {
+oldest = i;
+}
 }
 
-Student::Student(string studentId, string studentName) {
-    id = studentId;
-    name = studentName;
+cout << "\nOldest dog: " << dogs[oldest].name << endl;
+cout << "Age: " << dogs[oldest].age << endl;
 }
 
-string Student::getId() const {
-    return id;
+// Finds and displays the heaviest dog
+void showHeaviestDog(Dog dogs[], int count) {
+if (count == 0) {
+cout << "\nNo dogs have been added yet.\n";
+return;
 }
 
-string Student::getName() const {
-    return name;
+int heaviest = 0;
+
+for (int i = 1; i < count; i++) {
+if (dogs[i].weight > dogs[heaviest].weight) {
+heaviest = i;
+}
 }
 
-ScoreList& Student::getScoreList() {
-    return scoreList;
+cout << "\nHeaviest dog: " << dogs[heaviest].name << endl;
+cout << "Weight: " << dogs[heaviest].weight << " lbs" << endl;
+}
+void sortDogsByAge(Dog dogs[], int count) {
+for (int i = 0; i < count - 1; i++) {
+for (int j = 0; j < count - i - 1; j++) {
+if (dogs[j].age > dogs[j + 1].age) {
+Dog temp = dogs[j];
+dogs[j] = dogs[j + 1];
+dogs[j + 1] = temp;
+}
+}
+}
+}
+// Week 6: Demonstrates using a pointer with dog information
+void demonstratePointer(Dog dogs[], int count) {
+if (count > 0) {
+Dog* dogPtr = &dogs[0];
+
+cout << "\nPointer example - Dog: "
+<< dogPtr->name << endl;
+}
+}
+void demonstrateLinkedList();
+
+void runDogCareTracker() {
+Dog dogs[10];
+int count = loadDogs(dogs);
+int choice;
+
+do {
+showMenu();
+cin >> choice;
+
+switch (choice) {
+case 1:
+if (count < 10) {
+dogs[count] = addDog();
+count++;
+saveDogs(dogs, count);
+cout << "\nDog added successfully.\n";
+} else {
+cout << "\nDog list is full.\n";
+}
+break;
+
+case 2:
+viewDogs(dogs, count);
+demonstratePointer(dogs, count);
+sortDogsByAge(dogs, count);
+demonstrateLinkedList();
+break;
+
+case 3:
+showOldestDog(dogs, count);
+break;
+
+case 4:
+showHeaviestDog(dogs, count);
+break;
+
+case 5:
+cout << "\nGoodbye!\n";
+break;
+
+default:
+cout << "\nInvalid choice. Try again.\n";
 }
 
-const ScoreList& Student::getScoreList() const {
-    return scoreList;
+} while (choice != 5);
 }
 
-double Student::getAverage() const {
-    return scoreList.getAverage();
-}
-
-char Student::getLetterGrade() const {
-    return determineLetterGrade(getAverage());
-}
-
-bool Student::isValidId(string id) {
-    return id.length() >= 3 && id[0] >= 'A' && id[0] <= 'Z';
-}
-
-char Student::determineLetterGrade(double average) {
-    if (average >= A_MINIMUM) {
-        return 'A';
-    } else if (average >= B_MINIMUM) {
-        return 'B';
-    } else if (average >= C_MINIMUM) {
-        return 'C';
-    } else if (average >= D_MINIMUM) {
-        return 'D';
-    } else {
-        return 'F';
-    }
-}
-
-// ===============================
-// Task and TaskList
-// ===============================
-
-Task::Task() {
-    description = "";
-    priority = 1;
-    completed = false;
-}
-
-Task::Task(string taskDescription, int taskPriority) {
-    description = taskDescription;
-
-    if (isValidPriority(taskPriority)) {
-        priority = taskPriority;
-    } else {
-        priority = 1;
-    }
-
-    completed = false;
-}
-
-string Task::getDescription() const {
-    return description;
-}
-
-int Task::getPriority() const {
-    return priority;
-}
-
-bool Task::isCompleted() const {
-    return completed;
-}
-
-void Task::markComplete() {
-    completed = true;
-}
-
-bool Task::isValidPriority(int priority) {
-    return priority >= 1 && priority <= 5;
-}
-
-TaskNode::TaskNode(Task task) {
-    data = task;
-    next = nullptr;
-}
-
-TaskList::TaskList() {
-    head = nullptr;
-}
-
-TaskList::~TaskList() {
-    clear();
-}
-
-void TaskList::insertFront(Task task) {
-    TaskNode* newNode = new TaskNode(task);
-    newNode->next = head;
-    head = newNode;
-}
-
-int TaskList::countTasks() const {
-    int count = 0;
-    const TaskNode* current = head;
-
-    while (current != nullptr) {
-        count++;
-        current = current->next;
-    }
-
-    return count;
-}
-
-TaskNode* TaskList::findTask(string description) {
-    TaskNode* current = head;
-
-    while (current != nullptr) {
-        if (current->data.getDescription() == description) {
-            return current;
-        }
-
-        current = current->next;
-    }
-
-    return nullptr;
-}
-
-const TaskNode* TaskList::findTask(string description) const {
-    const TaskNode* current = head;
-
-    while (current != nullptr) {
-        if (current->data.getDescription() == description) {
-            return current;
-        }
-
-        current = current->next;
-    }
-
-    return nullptr;
-}
-
-bool TaskList::markTaskComplete(string description) {
-    TaskNode* found = findTask(description);
-
-    if (found == nullptr) {
-        return false;
-    }
-
-    found->data.markComplete();
-    return true;
-}
-
-int TaskList::removeCompletedTasks() {
-    int removed = 0;
-
-    while (head != nullptr && head->data.isCompleted()) {
-        TaskNode* nodeToRemove = head;
-        head = head->next;
-        delete nodeToRemove;
-        removed++;
-    }
-
-    TaskNode* current = head;
-
-    while (current != nullptr && current->next != nullptr) {
-        if (current->next->data.isCompleted()) {
-            TaskNode* nodeToRemove = current->next;
-            current->next = nodeToRemove->next;
-            delete nodeToRemove;
-            removed++;
-        } else {
-            current = current->next;
-        }
-    }
-
-    return removed;
-}
-
-void TaskList::clear() {
-    TaskNode* current = head;
-
-    while (current != nullptr) {
-        TaskNode* nextNode = current->next;
-        delete current;
-        current = nextNode;
-    }
-
-    head = nullptr;
-}
-
-bool TaskList::isEmpty() const {
-    return head == nullptr;
-}
-
-// ===============================
-// InventoryReport
-// ===============================
-
-bool InventoryReport::isValidQuantity(int quantity) {
-    return quantity >= 0;
-}
-
-bool InventoryReport::isValidPrice(double price) {
-    return price >= 0.0;
-}
-
-double InventoryReport::calculateItemValue(const InventoryItem& item) {
-    if (!isValidQuantity(item.quantity) || !isValidPrice(item.price)) {
-        return 0.0;
-    }
-
-    return item.quantity * item.price;
-}
-
-int InventoryReport::readInventoryFile(string filename, InventoryItem items[], int maxItems) {
-    if (items == nullptr || maxItems <= 0) {
-        return 0;
-    }
-
-    ifstream in(filename);
-
-    if (!in.is_open()) {
-        return 0;
-    }
-
-    int count = 0;
-    InventoryItem item;
-
-    while (count < maxItems &&
-           in >> item.sku >> item.name >> item.quantity >> item.price) {
-        if (isValidQuantity(item.quantity) && isValidPrice(item.price)) {
-            items[count] = item;
-            count++;
-        }
-    }
-
-    return count;
-}
-
-bool InventoryReport::writeInventoryReport(string filename, const InventoryItem items[], int count) {
-    if (items == nullptr || count < 0) {
-        return false;
-    }
-
-    ofstream out(filename);
-
-    if (!out.is_open()) {
-        return false;
-    }
-
-    out << fixed << setprecision(2);
-    out << "Inventory Report" << endl;
-    out << "SKU Name Quantity Price Value" << endl;
-
-    for (int i = 0; i < count; i++) {
-        out << items[i].sku << " "
-            << items[i].name << " "
-            << items[i].quantity << " "
-            << items[i].price << " "
-            << calculateItemValue(items[i]) << endl;
-    }
-
-    out << "Total inventory value: "
-        << calculateTotalInventoryValue(items, count)
-        << endl;
-
-    return true;
-}
-
-double InventoryReport::calculateTotalInventoryValue(const InventoryItem items[], int count) {
-    if (items == nullptr || count <= 0) {
-        return 0.0;
-    }
-
-    double total = 0.0;
-
-    for (int i = 0; i < count; i++) {
-        total += calculateItemValue(items[i]);
-    }
-
-    return total;
-}
-
-int InventoryReport::findItemBySku(const InventoryItem items[], int count, string sku) {
-    if (items == nullptr || count <= 0) {
-        return -1;
-    }
-
-    for (int i = 0; i < count; i++) {
-        if (items[i].sku == sku) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-int InventoryReport::findHighestValueItemIndex(const InventoryItem items[], int count) {
-    if (items == nullptr || count <= 0) {
-        return -1;
-    }
-
-    int highestIndex = 0;
-
-    for (int i = 1; i < count; i++) {
-        if (calculateItemValue(items[i]) > calculateItemValue(items[highestIndex])) {
-            highestIndex = i;
-        }
-    }
-
-    return highestIndex;
-}
-
-// ===============================
-// Menu helpers
-// ===============================
-
-bool isValidMenuChoice(int choice) {
-    return choice >= 0 && choice <= 4;
-}
-
-void printMenu() {
-    cout << endl;
-    cout << "Final Project Sample Menu" << endl;
-    cout << "1. Demonstrate student scores" << endl;
-    cout << "2. Demonstrate linked task list" << endl;
-    cout << "3. Demonstrate inventory report" << endl;
-    cout << "4. Show instructions" << endl;
-    cout << "0. Exit" << endl;
-    cout << "Choice: ";
-}
-
-void printStudent(const Student& student) {
-    cout << student.getId() << " "
-         << student.getName() << " "
-         << "Average: " << student.getAverage() << " "
-         << "Grade: " << student.getLetterGrade()
-         << endl;
+// Week 6: Pointers, Dynamic Memory, and Linked Lists
+struct CareNode {
+string activity;
+CareNode* next;
+};
+
+void demonstrateLinkedList() {
+CareNode* first = new CareNode{"Fed dog", nullptr};
+CareNode* second = new CareNode{"Walked dog", nullptr};
+
+first->next = second;
+
+cout << "Care history: " << first->activity
+<< ", " << first->next->activity << "\n";
+
+delete second;
+delete first;
 }
