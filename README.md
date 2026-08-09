@@ -96,43 +96,43 @@ Before submitting your final project, update this README.md so it describes your
 ## Course Topics Integrated and Tested
 
 1. Week 1 Program Basics
-   - Code location:
-   - Test location:
+   - Code location: src/project.cpp, lines 8-38
+   - Test location: tests/test_project.cpp - testMenuBasics()
 
 2. Week 2 Decisions and Loops
-   - Code location:
-   - Test location:
+   - Code location: src/project.cpp, lines 43-55 and 76-80
+   - Test location: tests/test_project.cpp - testInvalidChoice()
 
 3. Week 3 Functions and Program Design
-   - Code location:
-   - Test location:
+   - Code location: src/project.cpp, lines 26-91
+   - Test location: tests/test_project.cpp - testViewDogs()
 
 4. Week 4 Arrays, Searching, and Sorting
-   - Code location:
-   - Test location:
+   - Code location: src/project.cpp, lines 42-55 and 88-105, and 123-133
+   - Test location: tests/test_project.cpp - testOldestDog() and testHeaviestDog()
 
 5. Week 5 Strings and Structures
-   - Code location:
-   - Test location:
+   - Code location: src/project.cpp, lines 8-13
+   - Test location: tests/test_project.cpp - testViewDogs()
 
 6. Week 6 Pointers, Dynamic Memory, and Linked Lists
-   - Code location:
-   - Test location:
+   - Code location: src/project.cpp, lines 124-132
+   - Test location: tests/test_project.cpp - testPointer()
 
 7. Week 7 File I/O and Integration
-   - Code location:
-   - Test location:
+   - Code location: src/project.cpp, lines 58-84
+   - Test location: tests/test_project.cpp - testFileIO()
 ```
 
 ## Final Submission Checklist
 
-- [ ] My project compiles with `make`.
-- [ ] My project runs with `./main`.
-- [ ] My tests run with `make test`.
-- [ ] I deleted or replaced the sample project code.
-- [ ] My project uses class names that are nouns from my own project.
-- [ ] My project integrates all 7 course topics in reachable code.
-- [ ] My project includes at least one unit test per course topic.
-- [ ] My README explains where each topic appears.
-- [ ] My README explains which test verifies each topic.
-- [ ] My code is committed and pushed to GitHub Classroom.
+- [x] My project compiles with `make`.
+- [x] My project runs with `./main`.
+- [x] My tests run with `make test`.
+- [x] I deleted or replaced the sample project code.
+- [x] My project uses class names that are nouns from my own project.
+- [x] My project integrates all 7 course topics in reachable code.
+- [X] My project includes at least one unit test per course topic.
+- [X] My README explains where each topic appears.
+- [X] My README explains which test verifies each topic.
+- [X] My code is committed and pushed to GitHub Classroom.
